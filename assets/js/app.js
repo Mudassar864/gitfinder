@@ -1,16 +1,13 @@
 /**
  * @license MIT
- * @author Mudassar <mohammadsadee24@gmail.com>
+ * @author Mudassar <mohsanbhhati864@gmail.com>
  * @copyright Mudassar 2023
  */
 
-
-'use strict';
-
+"use strict";
 
 import { fetchData } from "./api.js";
 import { numberToKilo } from "./module.js";
-
 
 /**
  * Add eventlistener on multiple elements
@@ -23,8 +20,7 @@ const addEventOnElements = function ($elements, eventType, callback) {
   for (const $item of $elements) {
     $item.addEventListener(eventType, callback);
   }
-}
-
+};
 
 /**
  * Header scroll state
@@ -36,13 +32,16 @@ window.addEventListener("scroll", function () {
   $header.classList[window.scrollY > 50 ? "add" : "remove"]("active");
 });
 
-
 /**
  * Search toggle
  */
 
-const /** {NodeElement} */ $searchToggler = document.querySelector("[data-search-toggler]");
-const /** {NodeElement} */ $searchField = document.querySelector("[data-search-field]");
+const /** {NodeElement} */ $searchToggler = document.querySelector(
+    "[data-search-toggler]"
+  );
+const /** {NodeElement} */ $searchField = document.querySelector(
+    "[data-search-field]"
+  );
 let /** {Boolean} */ isExpanded = false;
 
 $searchToggler.addEventListener("click", function () {
@@ -52,23 +51,25 @@ $searchToggler.addEventListener("click", function () {
   $searchField.focus();
 });
 
-
 /**
  * Tab navigation
  */
 
 const /** {NodeList} */ $tabBtns = document.querySelectorAll("[data-tab-btn]");
-const /** {NodeList} */ $tabPanels = document.querySelectorAll("[data-tab-panel]");
+const /** {NodeList} */ $tabPanels =
+    document.querySelectorAll("[data-tab-panel]");
 
-let /** {NodeElement} */[$lastActiveTabBtn] = $tabBtns;
-let /** {NodeElement} */[$lastActiveTabPanel] = $tabPanels;
+let /** {NodeElement} */ [$lastActiveTabBtn] = $tabBtns;
+let /** {NodeElement} */ [$lastActiveTabPanel] = $tabPanels;
 
 addEventOnElements($tabBtns, "click", function () {
   $lastActiveTabBtn.setAttribute("aria-selected", "false");
   $lastActiveTabPanel.setAttribute("hidden", "");
 
   this.setAttribute("aria-selected", "true");
-  const /** {NodeElement} */ $currentTabPanel = document.querySelector(`#${this.getAttribute("aria-controls")}`);
+  const /** {NodeElement} */ $currentTabPanel = document.querySelector(
+      `#${this.getAttribute("aria-controls")}`
+    );
   $currentTabPanel.removeAttribute("hidden");
 
   $lastActiveTabBtn = this;
@@ -94,7 +95,6 @@ addEventOnElements($tabBtns, "keydown", function (e) {
   }
 });
 
-
 /**
  * Work with API
  */
@@ -103,36 +103,41 @@ addEventOnElements($tabBtns, "keydown", function (e) {
  * Search
  */
 
-const /** {NodeElement} */ $searchSubmit = document.querySelector("[data-search-submit]");
+const /** {NodeElement} */ $searchSubmit = document.querySelector(
+    "[data-search-submit]"
+  );
 
-let /** {String} */ apiUrl = "https://api.github.com/users/Mudassar";
-let /** {String} */ repoUrl, followerUrl, followingUrl = "";
+let /** {String} */ apiUrl = "https://api.github.com/users/Mudassar864";
+let /** {String} */ repoUrl,
+  followerUrl,
+  followingUrl = "";
 
 const searchUser = function () {
   if (!$searchField.value) return;
 
   apiUrl = `https://api.github.com/users/${$searchField.value}`;
   updateProfile(apiUrl);
-}
+};
 
 $searchSubmit.addEventListener("click", searchUser);
 
 // Search when press Enter key
-$searchField.addEventListener("keydown", e => {
+$searchField.addEventListener("keydown", (e) => {
   if (e.key === "Enter") searchUser();
 });
-
 
 /**
  * Profile
  */
 
-const /** {NodeElement} */ $profileCard = document.querySelector("[data-profile-card]");
-const /** {NodeElement} */ $repoPanel = document.querySelector("[data-repo-panel]");
+const /** {NodeElement} */ $profileCard = document.querySelector(
+    "[data-profile-card]"
+  );
+const /** {NodeElement} */ $repoPanel =
+    document.querySelector("[data-repo-panel]");
 const /** {NodeElement} */ $error = document.querySelector("[data-error]");
 
 window.updateProfile = function (profileUrl) {
-
   $error.style.display = "none";
   document.body.style.overflowY = "visible";
 
@@ -166,45 +171,44 @@ window.updateProfile = function (profileUrl) {
     </div>
   `.repeat(6);
 
-  fetchData(profileUrl, data => {
+  fetchData(
+    profileUrl,
+    (data) => {
+      const {
+        type,
+        avatar_url,
+        name,
+        login: username,
+        html_url: githubPage,
+        bio,
+        location,
+        company,
+        blog: website,
+        twitter_username,
+        public_repos,
+        followers,
+        following,
+        followers_url,
+        following_url,
+        repos_url,
+      } = data;
 
-    const {
-      type,
-      avatar_url,
-      name,
-      login: username,
-      html_url: githubPage,
-      bio,
-      location,
-      company,
-      blog: website,
-      twitter_username,
-      public_repos,
-      followers,
-      following,
-      followers_url,
-      following_url,
-      repos_url
-    } = data;
+      repoUrl = repos_url;
+      followerUrl = followers_url;
+      followingUrl = following_url.replace("{/other_user}", "");
 
-    repoUrl = repos_url;
-    followerUrl = followers_url;
-    followingUrl = following_url.replace("{/other_user}", "");
-
-    $profileCard.innerHTML = `
-      <figure class="${type === "User" ? "avatar-circle" : "avatar-rounded"} img-holder" style="--width: 280; --height: 280">
+      $profileCard.innerHTML = `
+      <figure class="${
+        type === "User" ? "avatar-circle" : "avatar-rounded"
+      } img-holder" style="--width: 280; --height: 280">
         <img src="${avatar_url}" width="280" height="280" alt="${username}" class="img-cover">
       </figure>
 
-      ${name ?
-        `<h1 class="title-2">${name}</h1>` : ""
-      }
+      ${name ? `<h1 class="title-2">${name}</h1>` : ""}
       
       <p class="username text-primary">${username}</p>
 
-      ${bio ?
-        `<p class="bio">${bio}</p>` : ""
-      }
+      ${bio ? `<p class="bio">${bio}</p>` : ""}
 
       <a href="${githubPage}" target="_blank" class="btn btn-secondary">
         <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
@@ -214,32 +218,42 @@ window.updateProfile = function (profileUrl) {
 
       <ul class="profile-meta">
 
-      ${location ?
-        `<li class="meta-item">
+      ${
+        location
+          ? `<li class="meta-item">
           <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
 
           <span class="meta-text">${location}</span>
-        </li>` : ""
+        </li>`
+          : ""
       }
 
-      ${company ?
-        `<li class="meta-item">
+      ${
+        company
+          ? `<li class="meta-item">
           <span class="material-symbols-rounded" aria-hidden="true">apartment</span>
 
           <span class="meta-text">${company}</span>
-        </li>` : ""
+        </li>`
+          : ""
       }
 
-      ${website ?
-        `<li class="meta-item">
+      ${
+        website
+          ? `<li class="meta-item">
           <span class="material-symbols-rounded" aria-hidden="true">captive_portal</span>
 
-          <a href="${website}" target="_blank" class="meta-text">${website.replace("https://", "")}</a>
-        </li>` : ""
+          <a href="${website}" target="_blank" class="meta-text">${website.replace(
+              "https://",
+              ""
+            )}</a>
+        </li>`
+          : ""
       }
 
-      ${twitter_username ?
-        `<li class="meta-item">
+      ${
+        twitter_username
+          ? `<li class="meta-item">
           <span class="icon">
             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -249,7 +263,8 @@ window.updateProfile = function (profileUrl) {
           </span>
 
           <a href="https://twitter.com/${twitter_username}" target="_blank" class="meta-text">@${twitter_username}</a>
-        </li>` : ""
+        </li>`
+          : ""
       }
 
       </ul>
@@ -275,25 +290,24 @@ window.updateProfile = function (profileUrl) {
       </div>
     `;
 
-    updateRepository();
+      updateRepository();
+    },
+    () => {
+      $error.style.display = "grid";
+      document.body.style.overflowY = "hidden";
 
-  }, () => {
-    $error.style.display = "grid";
-    document.body.style.overflowY = "hidden";
-
-    $error.innerHTML = `
+      $error.innerHTML = `
       <p class="title-1">Oops! :(</p>
 
       <p class="text">
         There is no account with this username yet.
       </p>
     `;
-  });
-
-}
+    }
+  );
+};
 
 updateProfile(apiUrl);
-
 
 /**
  * Repository
@@ -302,17 +316,14 @@ updateProfile(apiUrl);
 let /** {Array} */ forkedRepos = [];
 
 const updateRepository = function () {
-
   fetchData(`${repoUrl}?sort=created&per_page=12`, function (data) {
-
     $repoPanel.innerHTML = `<h2 class="sr-only">Repositories</h2>`;
-    forkedRepos = data.filter(item => /** {Boolean} */ item.fork);
+    forkedRepos = data.filter((item) => /** {Boolean} */ item.fork);
 
-    const /** {Array} */ repositories = data.filter(i => !i.fork);
+    const /** {Array} */ repositories = data.filter((i) => !i.fork);
 
     if (repositories.length) {
       for (const repo of repositories) {
-
         const {
           name,
           html_url,
@@ -320,10 +331,11 @@ const updateRepository = function () {
           private: isPrivate,
           language,
           stargazers_count: stars_count,
-          forks_count
+          forks_count,
         } = repo;
 
-        const /** {NodeElement} */ $repoCard = document.createElement("article");
+        const /** {NodeElement} */ $repoCard =
+            document.createElement("article");
         $repoCard.classList.add("card", "repo-card");
 
         $repoCard.innerHTML = `
@@ -333,9 +345,7 @@ const updateRepository = function () {
               <h3 class="title-3">${name}</h3>
             </a>
 
-            ${description ?
-            `<p class="card-text">${description}</p>` : ""
-          }
+            ${description ? `<p class="card-text">${description}</p>` : ""}
 
             <span class="badge">${isPrivate ? "Private" : "Public"}</span>
 
@@ -343,12 +353,14 @@ const updateRepository = function () {
 
           <div class="card-footer">
 
-          ${language ?
-            `<div class="meta-item">
+          ${
+            language
+              ? `<div class="meta-item">
               <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
 
               <span class="span">${language}</span>
-            </div>` : ""
+            </div>`
+              : ""
           }
 
             <div class="meta-item">
@@ -378,26 +390,24 @@ const updateRepository = function () {
         </div>
       `;
     }
-
   });
-
-}
-
+};
 
 /**
  * Forked repository
  */
 
-const /** {NodeElement} */ $forkePanel = document.querySelector("[data-fork-panel]");
-const /** {NodeElement} */ $forkTabBtn = document.querySelector("[data-forked-tab-btn]");
+const /** {NodeElement} */ $forkePanel =
+    document.querySelector("[data-fork-panel]");
+const /** {NodeElement} */ $forkTabBtn = document.querySelector(
+    "[data-forked-tab-btn]"
+  );
 
 const updateForkRepo = function () {
-
   $forkePanel.innerHTML = `<h2 class="sr-only">Forked repositories</h2>`;
 
   if (forkedRepos.length) {
     for (const repo of forkedRepos) {
-
       const {
         name,
         html_url,
@@ -405,7 +415,7 @@ const updateForkRepo = function () {
         private: isPrivate,
         language,
         stargazers_count: stars_count,
-        forks_count
+        forks_count,
       } = repo;
 
       const /** {NodeElement} */ $forkCard = document.createElement("article");
@@ -418,9 +428,7 @@ const updateForkRepo = function () {
             <h3 class="title-3">${name}</h3>
           </a>
 
-          ${description ?
-          `<p class="card-text">${description}</p>` : ""
-        }
+          ${description ? `<p class="card-text">${description}</p>` : ""}
 
           <span class="badge">${isPrivate ? "Private" : "Public"}</span>
 
@@ -428,12 +436,14 @@ const updateForkRepo = function () {
 
         <div class="card-footer">
 
-        ${language ?
-          `<div class="meta-item">
+        ${
+          language
+            ? `<div class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
 
             <span class="span">${language}</span>
-          </div>` : ""
+          </div>`
+            : ""
         }
 
           <div class="meta-item">
@@ -463,21 +473,22 @@ const updateForkRepo = function () {
       </div>
     `;
   }
-
-}
+};
 
 $forkTabBtn.addEventListener("click", updateForkRepo);
-
 
 /**
  * Follower
  */
 
-const /** {NodeElement} */ $followerTabBtn = document.querySelector("[data-follower-tab-btn]");
-const /** {NodeElement} */ $followerPanel = document.querySelector("[data-follower-panel]");
+const /** {NodeElement} */ $followerTabBtn = document.querySelector(
+    "[data-follower-tab-btn]"
+  );
+const /** {NodeElement} */ $followerPanel = document.querySelector(
+    "[data-follower-panel]"
+  );
 
 const updateFollower = function () {
-
   $followerPanel.innerHTML = `
     <div class="card follower-skeleton">
       <div class="skeleton avatar-skeleton"></div>
@@ -487,19 +498,14 @@ const updateFollower = function () {
   `.repeat(12);
 
   fetchData(followerUrl, function (data) {
-
     $followerPanel.innerHTML = `<h2 class="sr-only">Followers</h2>`;
 
     if (data.length) {
       for (const item of data) {
+        const { login: username, avatar_url, url } = item;
 
-        const {
-          login: username,
-          avatar_url,
-          url
-        } = item;
-
-        const /** {NodeElement} */ $followerCard = document.createElement("article");
+        const /** {NodeElement} */ $followerCard =
+            document.createElement("article");
         $followerCard.classList.add("card", "follower-card");
 
         $followerCard.innerHTML = `
@@ -516,7 +522,6 @@ const updateFollower = function () {
         `;
 
         $followerPanel.appendChild($followerCard);
-
       }
     } else {
       $followerPanel.innerHTML = `
@@ -528,23 +533,23 @@ const updateFollower = function () {
         </div>
       `;
     }
-
   });
-
-}
+};
 
 $followerTabBtn.addEventListener("click", updateFollower);
-
 
 /**
  * Following
  */
 
-const /** {NodeElement} */ $followingTabBtn = document.querySelector("[data-following-tab-btn]");
-const /** {NodeElement} */ $followingPanel = document.querySelector("[data-following-panel]");
+const /** {NodeElement} */ $followingTabBtn = document.querySelector(
+    "[data-following-tab-btn]"
+  );
+const /** {NodeElement} */ $followingPanel = document.querySelector(
+    "[data-following-panel]"
+  );
 
 const updateFollowing = function () {
-
   $followingPanel.innerHTML = `
     <div class="card follower-skeleton">
       <div class="skeleton avatar-skeleton"></div>
@@ -554,19 +559,14 @@ const updateFollowing = function () {
   `.repeat(12);
 
   fetchData(followingUrl, function (data) {
-
     $followingPanel.innerHTML = `<h2 class="sr-only">Followings</h2>`;
 
     if (data.length) {
       for (const item of data) {
+        const { login: username, avatar_url, url } = item;
 
-        const {
-          login: username,
-          avatar_url,
-          url
-        } = item;
-
-        const /** {NodeElement} */ $followingCard = document.createElement("article");
+        const /** {NodeElement} */ $followingCard =
+            document.createElement("article");
         $followingCard.classList.add("card", "follower-card");
 
         $followingCard.innerHTML = `
@@ -583,7 +583,6 @@ const updateFollowing = function () {
         `;
 
         $followingPanel.appendChild($followingCard);
-
       }
     } else {
       $followingPanel.innerHTML = `
@@ -595,9 +594,7 @@ const updateFollowing = function () {
         </div>
       `;
     }
-
   });
-
-}
+};
 
 $followingTabBtn.addEventListener("click", updateFollowing);
