@@ -107,7 +107,7 @@ const /** {NodeElement} */ $searchSubmit = document.querySelector(
     "[data-search-submit]"
   );
 
-let /** {String} */ apiUrl = "https://api.github.com/users/Mudassar864";
+let /** {String} */ apiUrl = "https://api.github.com/users/mudassar864";
 let /** {String} */ repoUrl,
   followerUrl,
   followingUrl = "";
